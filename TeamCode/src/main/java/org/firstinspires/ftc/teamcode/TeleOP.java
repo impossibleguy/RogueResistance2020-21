@@ -27,7 +27,7 @@ public class TeleOP extends OpMode {
     private BNO055IMU imu;
     private ElapsedTime runtime;
     private double servo;
-    double shooterPower = .4;
+    double shooterPower = .39;
     boolean shotMode = false;
     ElapsedTime timer = new ElapsedTime();
     boolean servoMoving = false;
