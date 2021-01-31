@@ -12,6 +12,10 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+
 @TeleOp
 public class TeleOP extends OpMode {
     private DcMotorEx leftFront, leftBack, rightFront, rightBack, arm, shooter, intake, transfer;
@@ -27,10 +31,11 @@ public class TeleOP extends OpMode {
     private BNO055IMU imu;
     private ElapsedTime runtime;
     private double servo;
-    double shooterPower = .39;
+    double shooterPower = .80;
     boolean shotMode = false;
     ElapsedTime timer = new ElapsedTime();
     boolean servoMoving = false;
+    double initialAngle = currentAngle();
     @Override
     public void init() {
         //Maps all the variables to its respective hardware
@@ -53,7 +58,7 @@ public class TeleOP extends OpMode {
 
         //Initializing all new motors (shooter, arm, intake, transfer)
         arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        shooter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         transfer.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
@@ -138,11 +143,11 @@ public class TeleOP extends OpMode {
         //Reset the intake and transfer encoders
         precisionMode(); //check for precision mode
         armTravel(); // move arm
+        powerShot(); // toggles speed mode for flywheel
         revShoot(); // controls flywheel
         toggleIntake(); // controls intake, on off backwards
         toggleClaw(); // toggles claw
         flickRing(); // toggles flicker
-        powerShot(); // toggles speed mode for flywheel
         toggleHolder(); // toggles intake clip
 
 
@@ -160,12 +165,15 @@ public class TeleOP extends OpMode {
     }
 
     public void powerShot(){ // lowers flywheel speed
-        if(gamepad1.right_bumper && !shotMode && checkRB()){
-            shooterPower = .45;
+        if(gamepad1.dpad_left && !shotMode){
+            shooterPower = .80;
             shotMode = true;
-        } else if(gamepad1.right_bumper && checkRB()){
-            shooterPower = .45;
+        } else if(gamepad1.dpad_right && shotMode){
+            shooterPower = .75;
             shotMode = false;
+            else if(gamepad1.dpad_down){
+                shooterPower = 0.82;
+            }
         }
     }
 
@@ -189,14 +197,11 @@ public class TeleOP extends OpMode {
             timer.reset();
             flicker.setPosition(1);
             servoMoving = true;
-
         }
-
         if (timer.milliseconds() >= 850 && servoMoving) {
             timer.reset();
             flicker.setPosition(0);
             servoMoving = false;
-
         }
 */
         if(gamepad1.a)
@@ -215,6 +220,33 @@ public class TeleOP extends OpMode {
         }
         else if (gamepad2.right_stick_button || gamepad1.right_stick_button) {
             togglePrecision = false;
+        }
+    }
+
+    public void snapBot(){
+        if(gamepad1.back){
+            while(Math.abs(currentAngle()-initialAngle)<=1){
+                if(currentAngle()-initialAngle>0){
+                    leftFront.setDirection(DcMotor.Direction.FORWARD);
+                    leftBack.setDirection(DcMotor.Direction.FORWARD);
+                    rightFront.setDirection(DcMotor.Direction.FORWARD);
+                    rightBack.setDirection(DcMotor.Direction.FORWARD);
+                    leftFront.setPower(.1);
+                    leftBack.setPower(.1);
+                    rightFront.setPower(.1);
+                    rightBack.setPower(.1);
+                }
+                else{
+                    leftFront.setDirection(DcMotor.Direction.REVERSE);
+                    leftBack.setDirection(DcMotor.Direction.REVERSE);
+                    rightFront.setDirection(DcMotor.Direction.REVERSE);
+                    rightBack.setDirection(DcMotor.Direction.REVERSE);
+                    leftFront.setPower(.1);
+                    leftBack.setPower(.1);
+                    rightFront.setPower(.1);
+                    rightBack.setPower(.1);
+                }
+            }
         }
     }
 
@@ -291,7 +323,7 @@ public class TeleOP extends OpMode {
         }
         return false;
     }
-    /*public double currentAngle() {
+    public double currentAngle() {
         return imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-    }*/
+    }
 }
