@@ -38,13 +38,13 @@ public class AutoMain extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException  { //Load Zone B
         initialize();
-        moveBot(1,1,2,2,1, .6,true);
-//        moveBot(1,1,1,1,60, .6, true); //forward
-//        moveBot(2,1,2,1,-7, .6, true);
-//        yeetRing();
-//        moveBot(1,1,1,1,15, .6, true);
-//        moveBot(2,1,2,1,-9, .6, true);
-//        setDownWobbler();
+        //moveBot(1,1,2,2,1, .6,true);
+        moveBot(1,1,1,1,60, .6, true); //forward
+        moveBot(1,2,2,1,6, .6, true);
+        yeetRing();
+        moveBot(1,1,1,1,15, .6, true);
+        moveBot(2,1,2,1,-9, .6, true);
+        setDownWobbler();
 
 
         //0 Void 1 Forward 2 Reverse
@@ -56,7 +56,7 @@ public class AutoMain extends LinearOpMode {
         // else if(pipeline.getPosition() == UltimateGoalDeterminationPipeline.RingPosition.FOUR)
         // moveBot(1,1,2,3,48, .6, true);
         //moveBot(1, 1, 2, 2, 48, .60, true); //forward
-        //yeetRing();
+        //f();
         //moveBot(1, 1, 2, 2, 12, .60, true); //forward
         //setDownWobbler();
         //activate flicker
@@ -148,7 +148,7 @@ public class AutoMain extends LinearOpMode {
             heartbeat();
         }
     }
-    public void moveBot(int leftT, int leftB, int rightT, int rightB, int distance, double power, boolean withIntake) throws InterruptedException{
+    public void moveBot(int leftT, int rightT, int leftB, int rightB, int distance, double power, boolean withIntake) throws InterruptedException{
         //moveBot(1, 1, 2, 2, -24, .60, true); //Forwward
         //turnBot(2, 2, 1, 1, -24, .60); //Backward
         //turnBot(2, 1, 2, 1, 30, .60); //Strafe right
@@ -202,7 +202,8 @@ public class AutoMain extends LinearOpMode {
     }
 
     public void yeetRing() throws InterruptedException { //NEEDS TO BE REVAMPED TO INCLUDE FLICKER AND PARAMETER FOR RINGS
-        shooter.setPower(.8);
+        shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        shooter.setPower(-.8);
         ElapsedTime shooterTime = new ElapsedTime();
         int flick = 3000;
         //intake.setPower(-.5);
